@@ -1,7 +1,8 @@
 const { selectAllTopics } = require("../models/topics.models");
 
+console.log("## In controller...");
+
 exports.getTopics = (req, res, next) => {
-  console.log("## CONTROLLER");
   selectAllTopics()
     .then((topics) => {
       res.status(200).send({ topics });

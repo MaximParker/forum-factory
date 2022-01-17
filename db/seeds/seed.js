@@ -5,8 +5,6 @@ exports.seed = (data) => {
   const { articleData, commentData, topicData, userData } = data;
 
   // 1. create tables
-  console.log("## Clearing tables . . .");
-
   return db
     .query(`DROP TABLE IF EXISTS comments;`)
     .then(() => {
@@ -20,7 +18,6 @@ exports.seed = (data) => {
     })
 
     .then(() => {
-      console.log("## Inserting tables . . .");
       return db.query(`
       CREATE TABLE topics (
       slug VARCHAR(255) PRIMARY KEY NOT NULL,
@@ -30,7 +27,7 @@ exports.seed = (data) => {
     .then(() => {
       return db.query(`
       CREATE TABLE users (
-      username VARCHAR(255) PRIMARY KEY NOT NULL,
+      username VARCHAR(255) PRIMARY KEY ,
       avatar_url VARCHAR(255),
       name VARCHAR(255) NOT NULL
       );`);
@@ -61,7 +58,6 @@ exports.seed = (data) => {
 
     // 2. insert data
     .then(() => {
-      console.log("## Seeding tables . . .");
       const queryStr = format(
         `INSERT INTO topics
         (slug, description)
