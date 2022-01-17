@@ -5,7 +5,7 @@ exports.seed = (data) => {
   const { articleData, commentData, topicData, userData } = data;
 
   // 1. create tables
-  console.log("## Seeding database . . .");
+  console.log("## Clearing tables . . .");
 
   return db
     .query(`DROP TABLE IF EXISTS comments;`)
@@ -20,6 +20,7 @@ exports.seed = (data) => {
     })
 
     .then(() => {
+      console.log("## Inserting tables . . .");
       return db.query(`
       CREATE TABLE topics (
       slug VARCHAR(255) PRIMARY KEY,
@@ -60,6 +61,7 @@ exports.seed = (data) => {
 
     // 2. insert data
     .then(() => {
+      console.log("## Seeding tables . . .");
       const queryStr = format(
         `INSERT INTO topics
         (slug, description)
@@ -68,5 +70,36 @@ exports.seed = (data) => {
         topicData.map((topic) => [topic.slug, topic.description])
       );
       return db.query(queryStr)
-    });
+    })
+    .then(() => {
+      const queryStr = format(
+        `INSERT INTO users
+        (username, name, avatar_url)
+        VALUES %L
+        RETURNING *;`,
+        userData.map((user) => [user.username, user.name, user.avatar_url])
+      );
+      return db.query(queryStr)
+    })
+    .then(() => {
+      const queryStr = format(
+        `INSERT INTO articles
+        (title, body, votes, topic, author, created_at)
+        VALUES %L
+        RETURNING *;`,
+        articleData.map((article) => [article.title, article.body, article.votes, article.topic, article.author, article.created_at])
+      );
+      return db.query(queryStr)
+    })
+    .then(() => {
+      const queryStr = format(
+        `INSERT INTO comments
+        (author, article_id, votes, created_at, body)
+        VALUES %L
+        RETURNING *;`,
+        commentData.map((comment) => [comment.author, comment.article_id, comment.votes, comment.created_at, comment.body])
+      );
+      return db.query(queryStr)
+    })
+    ;
 };
