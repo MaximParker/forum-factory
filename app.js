@@ -8,7 +8,7 @@ const { getArticleByID } = require("./controllers/articles.controllers");
 
 app.get("/api/topics", getTopics);
 
-app.get('/api/articles/:article_id', getArticleByID)
+app.get('/api/articles/:article_id', getArticleByID);
 //app.patch('/api/articles/:article_id', patchArticleByID)
 //app.get('/api/articles/', getArticles)
 
