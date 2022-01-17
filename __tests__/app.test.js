@@ -8,8 +8,10 @@ const { seed } = require('../db/seeds/seed.js');
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
-describe('Dummy test :)', () => {
-    test('Dummy test :D', () => {
-        console.log("TEST: hi :)")
+describe('/api/topics', () => {
+    describe('GET', () => {
+        test('Dummy test :D', () => {
+            console.log("TEST: hi :)")
+        });
     });
 });

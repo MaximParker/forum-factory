@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
-const {  } = require("./controllers/XXXXXXXXXXX");
+const { getTopics } = require("./controllers/topics.controllers");
 
 // ENDPOINTS =====================================================
 
-//app.get('/api/topics', getTopics)
+app.get("/api/topics", getTopics);
 
 //app.get('/api/articles/:article_id', getArticleByID)
 //app.patch('/api/articles/:article_id', patchArticleByID)
