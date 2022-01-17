@@ -38,16 +38,24 @@ describe("/api/articles/:article_id", () => {
         .then(({ body }) => {
           expect(body).toEqual({
             article: {
-                article_id: 1,
+              article_id: 1,
               title: "Living in the shadow of a great man",
               topic: "mitch",
               author: "butter_bridge",
               body: "I find this existence challenging",
               created_at: "2020-07-08T23:00:00.000Z",
               votes: 100,
-              comment_count: 11
+              comment_count: 11,
             },
           });
+        });
+    });
+    test.only(`Responds 404 for a non-existent article_ID`, () => {
+      return request(app)
+        .get("/api/articles/635634")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
         });
     });
   });
