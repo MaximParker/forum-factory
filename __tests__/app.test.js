@@ -31,7 +31,7 @@ describe("/api/topics", () => {
 
 describe("/api/articles/:article_id", () => {
   describe("GET", () => {
-    test.only(`Responds 200 with an article object with the correct data`, () => {
+    test(`Responds 200 with an article object with the correct data`, () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -50,13 +50,21 @@ describe("/api/articles/:article_id", () => {
           });
         });
     });
-    test.only(`Responds 404 for a non-existent article_ID`, () => {
+    test(`Responds 404 for a non-existent article_ID`, () => {
       return request(app)
-        .get("/api/articles/635634")
+        .get("/api/articles/99999")
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("Not Found");
         });
     });
+    test(`Responds 400 for an invalid article_ID`, () => {
+        return request(app)
+          .get("/api/articles/bananas")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Bad Request");
+          });
+      });
   });
 });

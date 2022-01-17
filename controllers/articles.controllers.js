@@ -1,8 +1,6 @@
 const { selectArticleByID } = require("../models/articles.models");
 
 exports.getArticleByID = (req, res, next) => {
-  console.log("## CONTROLLER: getArticleByID...");
-
   selectArticleByID(req.params.article_id)
     .then((result) => {
       // For non-existent articles...
