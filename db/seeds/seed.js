@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../connection");
 
 exports.seed = (data) => {
@@ -55,7 +56,17 @@ exports.seed = (data) => {
       created_at DATE DEFAULT CURRENT_TIMESTAMP,
       body TEXT NOT NULL
       );`);
-    });
+    })
 
-  // 2. insert data
+    // 2. insert data
+    .then(() => {
+      const queryStr = format(
+        `INSERT INTO topics
+        (slug, description)
+        VALUES %L
+        RETURNING *;`,
+        topicData.map((topic) => [topic.slug, topic.description])
+      );
+      return db.query(queryStr)
+    });
 };
