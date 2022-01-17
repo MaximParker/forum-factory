@@ -23,14 +23,14 @@ exports.seed = (data) => {
       console.log("## Inserting tables . . .");
       return db.query(`
       CREATE TABLE topics (
-      slug VARCHAR(255) PRIMARY KEY,
+      slug VARCHAR(255) PRIMARY KEY NOT NULL,
       description VARCHAR(255)
       );`);
     })
     .then(() => {
       return db.query(`
       CREATE TABLE users (
-      username VARCHAR(255) PRIMARY KEY,
+      username VARCHAR(255) PRIMARY KEY NOT NULL,
       avatar_url VARCHAR(255),
       name VARCHAR(255) NOT NULL
       );`);
