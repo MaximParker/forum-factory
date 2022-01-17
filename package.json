@@ -19,6 +19,13 @@
     "url": "https://github.com/northcoders/be-nc-news/issues"
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
+  },
+  "dependencies": {
+    "express": "^4.17.2",
+    "pg": "^8.7.1"
+  }
 }
