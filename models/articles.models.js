@@ -1,6 +1,14 @@
 const db = require("../db/connection");
 const format = require("pg-format");
-const { checkValidID, lookupArticleByID, lookupCommentsByID } = require("../utils/articles.utils");
+const { lookupArticleByID, lookupCommentsByID } = require("../utils/articles.utils");
+
+exports.selectAllArticles = async () => {
+  try {
+    return db.query('SELECT * FROM articles;');
+  } catch (err) {
+    next(err); 
+  }
+}
 
 exports.selectArticleByID = async (id) => {
   try {

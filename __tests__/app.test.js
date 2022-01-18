@@ -36,7 +36,7 @@ describe.only('/api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({body}) => {
-        expect(body).toEqual("Hi :)")
+        expect(body.articles).toHaveLength(12);
       })
     });
   });

@@ -4,7 +4,7 @@ const { getArticles, getArticleByID, patchArticleByID } = require('../controller
 const articlesRouter = express.Router();
 
 articlesRouter.route('/')
-    //.get('articles/', getArticles)
+    .get(getArticles)
 
 articlesRouter.route('/:article_id')
     .get(getArticleByID)
