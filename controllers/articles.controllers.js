@@ -1,21 +1,35 @@
-const { selectArticleByID } = require("../models/articles.models");
+const { selectAllArticles, selectArticleByID, updateArticleVotes } = require("../models/articles.models");
+
+exports.getArticles = (req, res, next) => {
+  selectAllArticles()
+  .then((result) => {
+    res.status(200).send("Hi :)")
+  })
+}
 
 exports.getArticleByID = (req, res, next) => {
   selectArticleByID(req.params.article_id)
     .then((result) => {
-      // For non-existent articles...
-      if (result[0].rowCount === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      }
-      // For successful requests...
       res.status(200).send({
         article: {
           ...result[0].rows[0],
           comment_count: result[1].rows.length,
-        },
+        }
       });
     })
     .catch((err) => {
+      console.log("CONTROLLER:", err)
       next(err);
     });
 };
+
+exports.patchArticleByID = (req, res, next) => {
+  updateArticleVotes(req.params.article_id)
+  .then((result) => {
+    console.log
+    console.log(result)
+  })
+  .catch((err) => {
+    next(err);
+  })
+}

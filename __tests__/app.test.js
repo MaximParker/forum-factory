@@ -10,7 +10,7 @@ afterAll(() => db.end());
 
 describe("/api/topics", () => {
   describe("GET", () => {
-    test(`Responds 200 with array of topics in an object with key of 'topics', each with the correct types of attributes`, () => {
+    test('Responds 200 with array of topics in an object with key of topics, each with correct attribute types', () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
@@ -29,9 +29,22 @@ describe("/api/topics", () => {
   });
 });
 
+describe.only('/api/articles', () => {
+  describe('GET', () => {
+    test('Returns 200 with an array of all articles, nested in key "articles"', () => {
+      return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({body}) => {
+        expect(body).toEqual("Hi :)")
+      })
+    });
+  });
+});
+
 describe("/api/articles/:article_id", () => {
   describe("GET", () => {
-    test(`Responds 200 with an article object with the correct data`, () => {
+    test('Responds 200 with an article object and correct data', () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -50,7 +63,7 @@ describe("/api/articles/:article_id", () => {
           });
         });
     });
-    test(`Responds 404 for a non-existent article_ID`, () => {
+    test('Responds 404 for non-existent article_ID', () => {
       return request(app)
         .get("/api/articles/99999")
         .expect(404)
@@ -58,13 +71,26 @@ describe("/api/articles/:article_id", () => {
           expect(body.msg).toEqual("Not Found");
         });
     });
-    test(`Responds 400 for an invalid article_ID`, () => {
-        return request(app)
-          .get("/api/articles/bananas")
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toEqual("Bad Request");
-          });
-      });
+    test('Responds 400 for invalid article_ID (e.g. non-numerical string)', () => {
+      return request(app)
+        .get("/api/articles/banananas")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+  });
+  describe("PATCH", () => {
+    test('Responds 201 with updated article', () => {
+      const updateBody = { inc_votes: 100 };
+
+      return request(app)
+        .patch("/api/articles/1")
+        .send(updateBody)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article.votes).toEqual(200);
+        });
+    });
   });
 });
