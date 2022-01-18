@@ -10,7 +10,7 @@ afterAll(() => db.end());
 
 describe("/api/topics", () => {
   describe("GET", () => {
-    test('Responds 200 with array of topics in an object with key of topics, each with correct attribute types', () => {
+    test("Responds 200 with array of topics in an object with key of topics, each with correct attribute types", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
@@ -29,41 +29,64 @@ describe("/api/topics", () => {
   });
 });
 
-describe('/api/articles', () => {
-  describe('GET', () => {
+describe("/api/articles", () => {
+  describe("GET", () => {
     test('Returns 200 with an array of all articles, nested in key "articles"', () => {
       return request(app)
-      .get('/api/articles')
-      .expect(200)
-      .then(({body}) => {
-        expect(body.articles).toHaveLength(12);
-        body.articles.forEach((entry) => {
-          expect(entry).toEqual(
-            expect.objectContaining({
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toHaveLength(12);
+          body.articles.forEach((entry) => {
+            expect(entry).toEqual(
+              expect.objectContaining({
                 article_id: expect.any(Number),
                 title: expect.any(String),
                 topic: expect.any(String),
                 author: expect.any(String),
                 body: expect.any(String),
                 created_at: expect.any(String),
-                votes: expect.any(Number)
-            })
-          )
-        })
-      })
+                votes: expect.any(Number),
+              })
+            );
+          });
+        });
     });
-/*     test('Returns a list sorted according to the given sort_by query ', () => {
+    test("Returns a list sorted in descending date order by default", () => {
       return request(app)
-      .get('/api/articles?sort_by=author')
-      .expect(200)
-      .then(({body}) => {
-        expect(body.articles).toBeSortedBy('author')
-      })
-    }); */
+        .get("/api/articles?sort_by=created_at")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    test("Returns a list sorted by the sort_by query (descending by default)", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("author", {
+            descending: true,
+          });
+        });
+    });
+    test("Returns a list arranged according to the order query", () => {
+      return request(app)
+        .get("/api/articles?order=ASC")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            ascending: true,
+          });
+        });
+    });
   });
+
   describe("/:article_id", () => {
     describe("GET", () => {
-      test('Responds 200 with an article object and correct data', () => {
+      test("Responds 200 with an article object and correct data", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
@@ -77,12 +100,12 @@ describe('/api/articles', () => {
                 body: "I find this existence challenging",
                 created_at: "2020-07-08T23:00:00.000Z",
                 votes: 100,
-                comment_count: 11
+                comment_count: 11,
               },
             });
           });
       });
-      test('Responds 404 for non-existent article_ID', () => {
+      test("Responds 404 for non-existent article_ID", () => {
         return request(app)
           .get("/api/articles/99999")
           .expect(404)
@@ -90,7 +113,7 @@ describe('/api/articles', () => {
             expect(body.msg).toEqual("Not Found");
           });
       });
-      test('Responds 400 for invalid article_ID (e.g. non-numerical string)', () => {
+      test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
         return request(app)
           .get("/api/articles/banananas")
           .expect(400)
@@ -100,7 +123,7 @@ describe('/api/articles', () => {
       });
     });
     describe("PATCH", () => {
-      test('Responds 201 with updated article', () => {
+      test("Responds 201 with updated article", () => {
         const updateBody = { inc_votes: 100 };
 
         return request(app)
@@ -111,7 +134,7 @@ describe('/api/articles', () => {
             expect(body.article.votes).toEqual(200);
           });
       });
-      test('Responds 404 for non-existent article_ID', () => {
+      test("Responds 404 for non-existent article_ID", () => {
         return request(app)
           .patch("/api/articles/99999")
           .expect(404)
@@ -119,7 +142,7 @@ describe('/api/articles', () => {
             expect(body.msg).toEqual("Not Found");
           });
       });
-      test('Responds 400 for missing attribute in request body', () => {
+      test("Responds 400 for missing attribute in request body", () => {
         const updateBody = {};
 
         return request(app)
