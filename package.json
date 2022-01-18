@@ -21,6 +21,7 @@
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "devDependencies": {
     "jest": "^27.4.7",
+    "jest-sorted": "^1.0.14",
     "nodemon": "^2.0.15",
     "supertest": "^6.2.1"
   },

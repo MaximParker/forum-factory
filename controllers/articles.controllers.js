@@ -16,19 +16,19 @@ exports.getArticleByID = (req, res, next) => {
       res.status(200).send({article});
     })
     .catch((err) => {
-      console.log("CONTROLLER:", err);
       next(err);
     });
 };
-/* 
+
 exports.patchArticleByID = (req, res, next) => {
-  updateArticleVotes(req.params.article_id)
-    .then((result) => {
-      console.log;
-      console.log(result);
+  updateArticleVotes(req.params.article_id, req.body.inc_votes)
+    .then(({rows}) => {
+      if (rows.length === 0) {
+        res.status(404).send({msg: "Not Found"})
+      }
+      res.status(201).send({article: rows[0]})
     })
     .catch((err) => {
       next(err);
     });
 };
- */

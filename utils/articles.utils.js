@@ -1,12 +1,10 @@
 const db = require("../db/connection.js");
 
-exports.lookupArticleByID = async (id) => {
-  const lookup = await db.query(
+exports.lookupArticleByID = (id) => {
+  return db.query(
     `SELECT * FROM articles
       WHERE article_id = $1;`,
-    [id]
-  );
-  return lookup;
+    [id])
 };
 
 exports.lookupCommentsByID = async (id) => {

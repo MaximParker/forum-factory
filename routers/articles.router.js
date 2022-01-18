@@ -8,8 +8,7 @@ articlesRouter.route('/')
 
 articlesRouter.route('/:article_id')
     .get(getArticleByID)
-/*     .patch(patchArticleByID) */
-
+    .patch(patchArticleByID)
 
 //app.get('/api/articles/:article_id/comments', getArticleComments)
 //app.post('/api/articles/:article_id/comments', postCommentOnArticle)

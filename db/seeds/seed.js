@@ -38,7 +38,7 @@ exports.seed = (data) => {
       article_id SERIAL PRIMARY KEY,
       title VARCHAR(255) NOT NULL,
       body TEXT NOT NULL,
-      votes INT DEFAULT 0,
+      votes INT DEFAULT 0 NOT NULL,
       topic VARCHAR(255) REFERENCES topics (slug),
       author VARCHAR(255) REFERENCES users (username),
       created_at DATE DEFAULT CURRENT_TIMESTAMP
@@ -50,7 +50,7 @@ exports.seed = (data) => {
       comment_id SERIAL PRIMARY KEY,
       author VARCHAR(255) REFERENCES users (username),
       article_id INT REFERENCES articles (article_id),
-      votes INT DEFAULT 0,
+      votes INT DEFAULT 0 NOT NULL,
       created_at DATE DEFAULT CURRENT_TIMESTAMP,
       body TEXT NOT NULL
       );`);

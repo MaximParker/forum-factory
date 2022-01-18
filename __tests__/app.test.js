@@ -37,8 +37,29 @@ describe('/api/articles', () => {
       .expect(200)
       .then(({body}) => {
         expect(body.articles).toHaveLength(12);
+        body.articles.forEach((entry) => {
+          expect(entry).toEqual(
+            expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number)
+            })
+          )
+        })
       })
     });
+/*     test('Returns a list sorted according to the given sort_by query ', () => {
+      return request(app)
+      .get('/api/articles?sort_by=author')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.articles).toBeSortedBy('author')
+      })
+    }); */
   });
   describe("/:article_id", () => {
     describe("GET", () => {
@@ -81,13 +102,32 @@ describe('/api/articles', () => {
     describe("PATCH", () => {
       test('Responds 201 with updated article', () => {
         const updateBody = { inc_votes: 100 };
-  
+
         return request(app)
           .patch("/api/articles/1")
           .send(updateBody)
           .expect(201)
           .then(({ body }) => {
             expect(body.article.votes).toEqual(200);
+          });
+      });
+      test('Responds 404 for non-existent article_ID', () => {
+        return request(app)
+          .patch("/api/articles/99999")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Not Found");
+          });
+      });
+      test('Responds 400 for missing attribute in request body', () => {
+        const updateBody = {};
+
+        return request(app)
+          .patch("/api/articles/1")
+          .send(updateBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Bad Request");
           });
       });
     });
