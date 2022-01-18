@@ -1,6 +1,12 @@
+exports.handleQueryErrors = (err, req, res, next) => {
+  if (err.status.code === '22P02') {
+    res.status(404).send({ msg: 'Bad Request' });
+  }
+}
+
 exports.handleCustomErrors = (err, req, res, next) => {
   if (err.status) {
-    console.log("ERROR:", err.status, err)
+    console.log("CUSTOM ERROR:", err.status, err)
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
