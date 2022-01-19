@@ -1,5 +1,5 @@
 const { lookupCommentsByID } = require("../utils/articles.utils");
-const { insertCommentByArticleID } = require("../models/comments.models");
+const { insertCommentByArticleID, deleteCommentByID } = require("../models/comments.models");
 
 exports.getCommentsOnArticle = (req, res, next) => {
   lookupCommentsByID(req.params.article_id)
@@ -15,8 +15,20 @@ exports.getCommentsOnArticle = (req, res, next) => {
 exports.postCommentOnArticle = (req, res, next) => {
   insertCommentByArticleID(req.params.article_id, req.body)
   .then((result) => {
-    console.log("postCommentOnArticle:", result)
     res.status(201).send({ comment: result });
+  })
+  .catch((err) => {
+    next(err);
+  })
+};
+
+exports.removeComment = (req, res, next) => {
+  deleteCommentByID(req.params.comment_id)
+  .then((result) => {
+    if (result == undefined) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+    res.status(204).send();
   })
   .catch((err) => {
     next(err);

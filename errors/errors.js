@@ -14,7 +14,7 @@ exports.handleQueryErrors = (err, req, res, next) => {
 
 exports.handleCustomErrors = (err, req, res, next) => {
   if (err.status) {
-    console.log("ChandleCustomErrors:", err.code, err);
+    console.log("handleCustomErrors:", err.code, err);
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);

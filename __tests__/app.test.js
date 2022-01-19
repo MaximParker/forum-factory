@@ -268,3 +268,34 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe('/api/comments/:comment_id', () => {
+  describe('DELETE', () => {
+    test("Responds 204 and no content", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({})
+        });
+    });
+    test("Actually removes the specified comment from the database", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .then(() => {
+          return db.query('SELECT * FROM comments WHERE comment_id = 1;')
+            .then(({rows}) => {
+              expect(rows).toEqual([])
+            })
+        });
+    });
+    test("Responds 404 for a non-existent comment_id", () => {
+      return request(app)
+        .delete("/api/comments/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found")
+        });
+    });
+  });
+});
