@@ -7,7 +7,8 @@ const {
 
 exports.selectAllArticles = (
   orderCriterion = "created_at",
-  orderArrangement = "DESC"
+  orderArrangement = "DESC",
+  filterTopic
 ) => {
   const validOrderCriteria = [
     "article_id",
@@ -28,8 +29,15 @@ exports.selectAllArticles = (
     orderArrangement = "DESC";
   }
 
-  const queryStr = `SELECT * FROM articles
-    ORDER BY ${orderCriterion} ${orderArrangement};`;
+  let filterStr = '';
+  if (filterTopic) {
+    filterStr = format(`WHERE topic = '%s'`, filterTopic)
+  }
+
+  let queryStr = format(`SELECT * FROM articles
+  %s
+  ORDER BY %s %s`, filterStr, orderCriterion, orderArrangement);
+
   return db.query(queryStr);
 };
 

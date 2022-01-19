@@ -82,77 +82,104 @@ describe("/api/articles", () => {
           });
         });
     });
-  });
-
-  describe("/:article_id", () => {
-    describe("GET", () => {
-      test("Responds 200 with an article object and correct data", () => {
-        return request(app)
-          .get("/api/articles/1")
-          .expect(200)
-          .then(({ body }) => {
-            expect(body).toEqual({
-              article: {
-                article_id: 1,
-                title: "Living in the shadow of a great man",
-                topic: "mitch",
-                author: "butter_bridge",
-                body: "I find this existence challenging",
-                created_at: "2020-07-08T23:00:00.000Z",
-                votes: 100,
-                comment_count: 11,
-              },
-            });
+    test("Returns a list filtered by the given topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((entry) => {
+            expect(entry).toEqual(
+              expect.objectContaining({
+                topic: 'mitch'
+              })
+            );
           });
-      });
-      test("Responds 404 for non-existent article_ID", () => {
-        return request(app)
-          .get("/api/articles/99999")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toEqual("Not Found");
-          });
-      });
-      test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
-        return request(app)
-          .get("/api/articles/banananas")
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toEqual("Bad Request");
-          });
-      });
+        });
     });
-    describe("PATCH", () => {
-      test("Responds 201 with updated article", () => {
-        const updateBody = { inc_votes: 100 };
+  });
+});
 
-        return request(app)
-          .patch("/api/articles/1")
-          .send(updateBody)
-          .expect(201)
-          .then(({ body }) => {
-            expect(body.article.votes).toEqual(200);
+describe("/api/articles/:article_id", () => {
+  describe("GET", () => {
+    test("Responds 200 with an article object and correct data", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            article: {
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-08T23:00:00.000Z",
+              votes: 100,
+              comment_count: 11,
+            },
           });
-      });
-      test("Responds 404 for non-existent article_ID", () => {
-        return request(app)
-          .patch("/api/articles/99999")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toEqual("Not Found");
-          });
-      });
-      test("Responds 400 for missing attribute in request body", () => {
-        const updateBody = {};
+        });
+    });
+    test("Responds 404 for non-existent article_ID", () => {
+      return request(app)
+        .get("/api/articles/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
+      return request(app)
+        .get("/api/articles/banananas")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+  });
+  describe("PATCH", () => {
+    test("Responds 201 with updated article", () => {
+      const updateBody = { inc_votes: 100 };
 
-        return request(app)
-          .patch("/api/articles/1")
-          .send(updateBody)
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toEqual("Bad Request");
-          });
-      });
+      return request(app)
+        .patch("/api/articles/1")
+        .send(updateBody)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article.votes).toEqual(200);
+        });
+    });
+    test("Responds 404 for non-existent article_ID", () => {
+      return request(app)
+        .patch("/api/articles/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 400 for missing attribute in request body", () => {
+      const updateBody = {};
+
+      return request(app)
+        .patch("/api/articles/1")
+        .send(updateBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+  });
+});
+
+describe.only('/api/articles/:article_id/comments', () => {
+  describe('GET', () => {
+    test("Responds 200 with array of comments, nested in an object", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toHaveLength(0);
+        });
     });
   });
 });
