@@ -137,6 +137,7 @@ describe("/api/articles/:article_id", () => {
         });
     });
   });
+
   describe("PATCH", () => {
     test("Responds 201 with updated article", () => {
       const updateBody = { inc_votes: 100 };
@@ -150,32 +151,76 @@ describe("/api/articles/:article_id", () => {
         });
     });
     test("Responds 404 for non-existent article_ID", () => {
+      const updateBody = { inc_votes: 100 };
+
       return request(app)
         .patch("/api/articles/99999")
+        .send(updateBody)
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("Not Found");
         });
     });
-    test("Responds 400 for missing attribute in request body", () => {
-      const updateBody = {};
+    test("Responds 422 for missing attribute in request body", () => {
+      const badBody = {};
 
       return request(app)
         .patch("/api/articles/1")
-        .send(updateBody)
-        .expect(400)
+        .send(badBody)
+        .expect(422)
         .then(({ body }) => {
-          expect(body.msg).toEqual("Bad Request");
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+    test("Responds 422 for invalid inc_votes value in request body", () => {
+      const badBody = {inc_votes: "banana"};
+
+      return request(app)
+        .patch("/api/articles/1")
+        .send(badBody)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+    test("Responds 422 for presence of invalid attribute(s) in request body", () => {
+      const badBody = {inc_votes: 10, monkey: "wrench"};
+
+      return request(app)
+        .patch("/api/articles/1")
+        .send(badBody)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
         });
     });
   });
 });
 
-describe.only('/api/articles/:article_id/comments', () => {
+describe('/api/articles/:article_id/comments', () => {
   describe('GET', () => {
-    test("Responds 200 with array of comments, nested in an object", () => {
+    test("Responds 200 with array of desired comment data, nested in an object", () => {
       return request(app)
         .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toHaveLength(11);
+          body.comments.forEach((entry) => {
+            expect(entry).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String)
+              })
+            );
+          });
+        });
+    });
+    test("Responds 200 with an empty array for articles with no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
         .expect(200)
         .then(({ body }) => {
           expect(body.comments).toHaveLength(0);

@@ -1,5 +1,6 @@
 const express = require('express')
 const { getArticles, getArticleByID, patchArticleByID } = require('../controllers/articles.controllers');
+const { getCommentsOnArticle } = require('../controllers/comments.controllers')
 
 const articlesRouter = express.Router();
 

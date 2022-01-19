@@ -21,7 +21,7 @@ exports.getArticleByID = (req, res, next) => {
 };
 
 exports.patchArticleByID = (req, res, next) => {
-  updateArticleVotes(req.params.article_id, req.body.inc_votes)
+  updateArticleVotes(req.params.article_id, req.body)
     .then(({rows}) => {
       if (rows.length === 0) {
         res.status(404).send({msg: "Not Found"})
