@@ -1,9 +1,9 @@
-const express = require('express')
-const {  } = require('../controllers/comments.controllers');
+const express = require("express");
+const { getCommentsOnArticle } = require("../controllers/comments.controllers");
 
 const commentsRouter = express.Router();
 
-commentsRouter.route('')
-    .get(getCommentsOnArticle)
-
-module.exports = { articlesRouter }
+/* commentsRouter.route('')
+    .get(getCommentsOnArticle);
+ */
+module.exports = { commentsRouter };

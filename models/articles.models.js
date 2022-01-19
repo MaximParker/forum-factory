@@ -17,7 +17,7 @@ exports.selectAllArticles = (
     "created_at",
     "author",
     "votes",
-    "body"
+    "body",
   ];
   const validOrderArrangements = ["ASC", "DESC"];
 
@@ -29,14 +29,19 @@ exports.selectAllArticles = (
     orderArrangement = "DESC";
   }
 
-  let filterStr = '';
+  let filterStr = "";
   if (filterTopic) {
-    filterStr = format(`WHERE topic = '%s'`, filterTopic)
+    filterStr = format(`WHERE topic = '%s'`, filterTopic);
   }
 
-  let queryStr = format(`SELECT * FROM articles
+  let queryStr = format(
+    `SELECT * FROM articles
   %s
-  ORDER BY %s %s`, filterStr, orderCriterion, orderArrangement);
+  ORDER BY %s %s`,
+    filterStr,
+    orderCriterion,
+    orderArrangement
+  );
 
   return db.query(queryStr);
 };
@@ -56,7 +61,10 @@ exports.selectArticleByID = (id) => {
 };
 
 exports.updateArticleVotes = (id, votesModifier) => {
-  if (typeof votesModifier.inc_votes != 'number' || Object.keys(votesModifier) != 'inc_votes') {
+  if (
+    typeof votesModifier.inc_votes != "number" ||
+    Object.keys(votesModifier) != "inc_votes"
+  ) {
     return Promise.reject({ status: 422, msg: "Unprocessable Entity" });
   }
 

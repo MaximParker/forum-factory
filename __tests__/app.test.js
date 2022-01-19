@@ -90,7 +90,7 @@ describe("/api/articles", () => {
           body.articles.forEach((entry) => {
             expect(entry).toEqual(
               expect.objectContaining({
-                topic: 'mitch'
+                topic: "mitch",
               })
             );
           });
@@ -173,7 +173,7 @@ describe("/api/articles/:article_id", () => {
         });
     });
     test("Responds 422 for invalid inc_votes value in request body", () => {
-      const badBody = {inc_votes: "banana"};
+      const badBody = { inc_votes: "banana" };
 
       return request(app)
         .patch("/api/articles/1")
@@ -184,7 +184,7 @@ describe("/api/articles/:article_id", () => {
         });
     });
     test("Responds 422 for presence of invalid attribute(s) in request body", () => {
-      const badBody = {inc_votes: 10, monkey: "wrench"};
+      const badBody = { inc_votes: 10, monkey: "wrench" };
 
       return request(app)
         .patch("/api/articles/1")
@@ -197,8 +197,8 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe('/api/articles/:article_id/comments', () => {
-  describe('GET', () => {
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
     test("Responds 200 with array of desired comment data, nested in an object", () => {
       return request(app)
         .get("/api/articles/1/comments")
@@ -212,7 +212,7 @@ describe('/api/articles/:article_id/comments', () => {
                 votes: expect.any(Number),
                 created_at: expect.any(String),
                 author: expect.any(String),
-                body: expect.any(String)
+                body: expect.any(String),
               })
             );
           });
@@ -224,6 +224,46 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.comments).toHaveLength(0);
+        });
+    });
+  });
+  describe("POST", () => {
+    test("Responds 201 and returns the posted comment", () => {
+      const commentObject = { username: "lurker", body: "10/10 would comment again" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(commentObject)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: 0,
+              created_at: expect.any(String),
+              author: "lurker",
+              body: "10/10 would comment again"
+            })
+          );
+        });
+    });
+    test("Responds 404 for non-existent article_id", () => {
+      const commentObject = { username: "lurker", body: "ASDASGFASDGASDFDS" };
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send(commentObject)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 400 for invalid article_id", () => {
+      const commentObject = { username: "lurker", body: "ASDASGFASDGASDFDS" };
+      return request(app)
+        .post("/api/articles/asdfasdfasfasfasdfasdf/comments")
+        .send(commentObject)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
         });
     });
   });
