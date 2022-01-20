@@ -15,12 +15,14 @@
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article.",
-          "created_at": "2020-07-08T23:00:00.000Z"
-        }
+          "title": "Running a Node App",
+          "topic": "coding",
+          "author": "jessjelly",
+          "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+          "created_at": "2020-11-07T06:03:00.000Z",
+          "votes": 0
+        },
+        "..."
       ]
     }
   },
@@ -28,7 +30,7 @@
     "description": "Serves the specified article object with its comment count",
     "queries": [],
     "exampleResponse": {
-      "article": {
+      "article":  {
         "article_id": 1,
         "title": "Living in the shadow of a great man",
         "topic": "mitch",
@@ -43,7 +45,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "Updates the vote counter on the specified article and returns the updated article object",
     "queries": [],
-    "exampleInput": {"inc_votes": 10},
+    "exampleInput": {"inc_votes": 99},
     "exampleResponse": {
       "article": {
         "article_id": 1,
@@ -52,7 +54,7 @@
         "author": "butter_bridge",
         "body": "I find this existence challenging",
         "created_at": "2020-07-08T23:00:00.000Z",
-        "votes": 200,
+        "votes": 199,
         "comment_count": 11
       }
     }
@@ -61,13 +63,16 @@
     "description": "Serves an array of all comments associated with the specified article",
     "queries": [],
     "exampleResponse": {
-      "comments": [{
-        "comment_id": 99,
-                "votes": 10,
-                "created_at": "2020-07-08T23:00:00.000Z",
-                "author": "",
-                "body": ""
-      }]
+      "comments": [
+        {
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 16,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": "2020-04-06T13:17:00.000Z"
+        },
+        "..."
+      ]
     }
   },
   "POST /api/articles/:article_id/comments": {
@@ -76,11 +81,11 @@
     "exampleInput": { "username": "lurker", "body": "10/10 would comment again" },
     "exampleResponse": {
       "comments": [{
-        "comment_id": 99,
-                "votes": 0,
-                "created_at": "2020-07-08T23:00:00.000Z",
-                "author": "lurker",
-                "body": "10/10 would comment again"
+        "comment_id": 999,
+        "votes": 0,
+        "created_at": "2020-07-08T23:00:00.000Z",
+        "author": "lurker",
+        "body": "10/10 would comment again"
       }]
     }
   },
