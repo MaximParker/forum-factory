@@ -1,8 +1,7 @@
-const { lookupCommentsByID } = require("../utils/articles.utils");
-const { insertCommentByArticleID, deleteCommentByID } = require("../models/comments.models");
+const { selectCommentsByID, insertCommentByArticleID, deleteCommentByID } = require("../models/comments.models");
 
 exports.getCommentsOnArticle = (req, res, next) => {
-  lookupCommentsByID(req.params.article_id)
+  selectCommentsByID(req.params.article_id)
     .then(({ rows }) => {
       const formattedArr = rows.map(({ article_id, ...rest }) => rest);
       res.status(200).send({ comments: formattedArr });

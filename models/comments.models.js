@@ -1,6 +1,15 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 
+exports.selectCommentsByID = (id) => {
+  return db.query(
+    `SELECT *
+    FROM comments
+    WHERE article_id = $1;`,
+    [id]
+  );
+}
+
 exports.insertCommentByArticleID = (id, commentObject) => {
   return db
     .query(

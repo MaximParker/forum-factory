@@ -1,5 +1,4 @@
 exports.handleQueryErrors = (err, req, res, next) => {
-  console.log("SQL ERROR!", err)
   if (err.code) {
     if (err.code === "22P02" || err.code === "23502") {
       res.status(400).send({ msg: "Bad Request" });

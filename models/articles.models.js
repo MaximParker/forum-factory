@@ -2,9 +2,10 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 exports.selectAllArticles = (
-  orderCriterion = "created_at",
+  sortCriterion = "created_at",
   orderArrangement = "DESC",
-  filterTopic
+  filterTopic,
+  availableTopics
 ) => {
   const validOrderCriteria = [
     "article_id",
@@ -17,12 +18,17 @@ exports.selectAllArticles = (
   ];
   const validOrderArrangements = ["ASC", "DESC", "asc", "desc"];
 
-  if (!validOrderCriteria.includes(orderCriterion)) {
-    orderCriterion = "created_at";
+  if (!validOrderCriteria.includes(sortCriterion)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
   if (!validOrderArrangements.includes(orderArrangement)) {
-    orderArrangement = "DESC";
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  if (filterTopic && !availableTopics.includes(filterTopic)) {
+    console.log("UNAVAILABLE TOPIC:", filterTopic, "not in", availableTopics)
+    return Promise.reject({ status: 404, msg: "Not Found" });
   }
 
   let filterStr = "";
@@ -39,15 +45,13 @@ exports.selectAllArticles = (
     GROUP BY articles.article_id
     ORDER BY %s %s;`,
     filterStr,
-    orderCriterion,
+    sortCriterion,
     orderArrangement
   );
-
-  return db.query(queryStr);
-};
+  return db.query(queryStr)
+}
 
 exports.selectArticleByID = (id) => {
-  console.log("MODEL: selectArticleByID")
   return db.query(`
     SELECT articles.*, COUNT(comment_id) AS comment_count
     FROM articles
@@ -58,7 +62,6 @@ exports.selectArticleByID = (id) => {
     [id])
   .then(
     (result) => {
-      console.log(result.rows[0])
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }

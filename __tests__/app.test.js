@@ -97,6 +97,38 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("Returns 400 for invalid sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=not_a_real_sort_query")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+    test("Returns 400 for invalid order query", () => {
+      return request(app)
+        .get("/api/articles?order=not_a_real_order_query")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+    test("Returns 404 for non-existent topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=not_a_real_topic_query")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Returns 200 and an empty array for a valid topic query with no associated articles", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toEqual([]);
+        });
+    });
   });
 });
 
