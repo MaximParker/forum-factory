@@ -7,7 +7,10 @@ const {
 exports.getArticles = (req, res, next) => {
   selectAllArticles(req.query.sort_by, req.query.order, req.query.topic).then(({rows}) => {
     res.status(200).send({articles: rows});
-  });
+  })
+  .catch((err) => {
+    next(err);
+  })
 };
 
 exports.getArticleByID = (req, res, next) => {

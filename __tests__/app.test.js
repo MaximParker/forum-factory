@@ -131,7 +131,7 @@ describe("/api/articles/:article_id", () => {
     });
     test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
       return request(app)
-        .get("/api/articles/banananas")
+        .get("/api/articles/not-a-real-article")
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toEqual("Bad Request");
@@ -308,9 +308,22 @@ describe('/api', () => {
         .get('/api')
         .expect(200)
         .then(({body}) => {
-          console.log("ENDPOINTS:\n", body)
           expect(body).toEqual(endpoints)
         });
     });
   });
 });
+/* 
+describe('/api/users', () => {
+  describe('GET', () => {
+    test('Responds with an array of users', () => {
+      return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+          expect(body).toEqual(endpoints)
+        });
+    });
+  });
+});
+*/

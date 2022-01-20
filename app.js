@@ -12,7 +12,6 @@ app.get('/api', (req, res, next) => {
     res.send(endpoints);
 })
 
-// ERROR HANDLERS ================================================
 app.use(handleQueryErrors);
 app.use(handleCustomErrors);
 app.use(handleServerErrors);
