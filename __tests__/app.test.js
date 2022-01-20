@@ -4,6 +4,7 @@ const app = require("../app");
 const db = require("../db/connection.js");
 const testData = require("../db/data/test-data/index.js");
 const { seed } = require("../db/seeds/seed.js");
+const endpoints = require('../endpoints.json')
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -295,6 +296,20 @@ describe('/api/comments/:comment_id', () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("Not Found")
+        });
+    });
+  });
+});
+
+describe('/api', () => {
+  describe('GET', () => {
+    test('Responds with a JSON object describing all available endpoints in the API', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+          console.log("ENDPOINTS:\n", body)
+          expect(body).toEqual(endpoints)
         });
     });
   });

@@ -1,27 +1,91 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Serves a JSON representation of the available endpoints of the API"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "Serves an array of all topics. Can be sorted by 'sort_by', ordered ASC or DESC with 'order', and filtered by 'topic'",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "body": "Text from the article.",
+          "created_at": "2020-07-08T23:00:00.000Z"
         }
       ]
     }
-  }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Serves the specified article object with its comment count",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-08T23:00:00.000Z",
+        "votes": 100,
+        "comment_count": 11
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates the vote counter on the specified article and returns the updated article object",
+    "queries": [],
+    "exampleInput": {"inc_votes": 10},
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-08T23:00:00.000Z",
+        "votes": 200,
+        "comment_count": 11
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array of all comments associated with the specified article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [{
+        "comment_id": 99,
+                "votes": 10,
+                "created_at": "2020-07-08T23:00:00.000Z",
+                "author": "",
+                "body": ""
+      }]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Adds a comment to the list associated with the specified article",
+    "queries": [],
+    "exampleInput": { "username": "lurker", "body": "10/10 would comment again" },
+    "exampleResponse": {
+      "comments": [{
+        "comment_id": 99,
+                "votes": 0,
+                "created_at": "2020-07-08T23:00:00.000Z",
+                "author": "lurker",
+                "body": "10/10 would comment again"
+      }]
+    }
+  },
+  "DELETE /api/comments/comment_id": {
+    "description": "Deletes the specified comment from the database",
+    "queries": [],
+    "exampleResponse": {}
 }
