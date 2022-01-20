@@ -1,9 +1,5 @@
 const db = require("../db/connection");
 const format = require("pg-format");
-const {
-  lookupArticleByID,
-  lookupCommentsByID,
-} = require("../utils/articles.utils");
 
 exports.selectAllArticles = (
   orderCriterion = "created_at",
@@ -17,7 +13,7 @@ exports.selectAllArticles = (
     "created_at",
     "author",
     "votes",
-    "body",
+    "body"
   ];
   const validOrderArrangements = ["ASC", "DESC", "asc", "desc"];
 
@@ -35,9 +31,13 @@ exports.selectAllArticles = (
   }
 
   let queryStr = format(
-    `SELECT * FROM articles
-  %s
-  ORDER BY %s %s`,
+    `
+    SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, COUNT(comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id 
+    %s
+    GROUP BY articles.article_id
+    ORDER BY %s %s;`,
     filterStr,
     orderCriterion,
     orderArrangement
@@ -47,12 +47,22 @@ exports.selectAllArticles = (
 };
 
 exports.selectArticleByID = (id) => {
-  return Promise.all([lookupArticleByID(id), lookupCommentsByID(id)]).then(
+  console.log("MODEL: selectArticleByID")
+  return db.query(`
+    SELECT articles.*, COUNT(comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id 
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id
+    ;`,
+    [id])
+  .then(
     (result) => {
-      if (result[0].rows.length === 0) {
+      console.log(result.rows[0])
+      if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
-      return result;
+      return result.rows[0];
     }
   );
 };

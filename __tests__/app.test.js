@@ -45,9 +45,9 @@ describe("/api/articles", () => {
                 title: expect.any(String),
                 topic: expect.any(String),
                 author: expect.any(String),
-                body: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
+                comment_count: expect.any(String)
               })
             );
           });
@@ -116,7 +116,7 @@ describe("/api/articles/:article_id", () => {
               body: "I find this existence challenging",
               created_at: "2020-07-08T23:00:00.000Z",
               votes: 100,
-              comment_count: 11,
+              comment_count: "11",
             },
           });
         });
