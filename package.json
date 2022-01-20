@@ -1,24 +1,26 @@
 {
-  "name": "be-nc-news",
+  "name": "forum-factory",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "Copy of bc-nc-news",
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest"
+    "test": "jest",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
+    "url": "git+https://github.com/MaximParker/forum-factory"
   },
   "keywords": [],
   "author": "MaximParker",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/northcoders/be-nc-news/issues"
+    "url": "https://github.com/MaximParker/forum-factory/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "homepage": "https://github.com/MaximParker/forum-factory#readme",
   "devDependencies": {
     "jest": "^27.4.7",
     "jest-sorted": "^1.0.14",

@@ -30,7 +30,7 @@
     "description": "Serves the specified article object with its comment count",
     "queries": [],
     "exampleResponse": {
-      "article":  {
+      "article": {
         "article_id": 1,
         "title": "Living in the shadow of a great man",
         "topic": "mitch",
@@ -45,7 +45,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "Updates the vote counter on the specified article and returns the updated article object",
     "queries": [],
-    "exampleInput": {"inc_votes": 99},
+    "exampleInput": { "inc_votes": 99 },
     "exampleResponse": {
       "article": {
         "article_id": 1,
@@ -78,19 +78,25 @@
   "POST /api/articles/:article_id/comments": {
     "description": "Adds a comment to the list associated with the specified article",
     "queries": [],
-    "exampleInput": { "username": "lurker", "body": "10/10 would comment again" },
+    "exampleInput": {
+      "username": "lurker",
+      "body": "10/10 would comment again"
+    },
     "exampleResponse": {
-      "comments": [{
-        "comment_id": 999,
-        "votes": 0,
-        "created_at": "2020-07-08T23:00:00.000Z",
-        "author": "lurker",
-        "body": "10/10 would comment again"
-      }]
+      "comments": [
+        {
+          "comment_id": 999,
+          "votes": 0,
+          "created_at": "2020-07-08T23:00:00.000Z",
+          "author": "lurker",
+          "body": "10/10 would comment again"
+        }
+      ]
     }
   },
   "DELETE /api/comments/comment_id": {
     "description": "Deletes the specified comment from the database",
     "queries": [],
     "exampleResponse": {}
+  }
 }
