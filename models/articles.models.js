@@ -19,7 +19,7 @@ exports.selectAllArticles = (
     "votes",
     "body",
   ];
-  const validOrderArrangements = ["ASC", "DESC"];
+  const validOrderArrangements = ["ASC", "DESC", "asc", "desc"];
 
   if (!validOrderCriteria.includes(orderCriterion)) {
     orderCriterion = "created_at";
@@ -48,14 +48,11 @@ exports.selectAllArticles = (
 
 exports.selectArticleByID = (id) => {
   return Promise.all([lookupArticleByID(id), lookupCommentsByID(id)]).then(
-    (aggregateData) => {
-      if (aggregateData[0].rows.length === 0) {
+    (result) => {
+      if (result[0].rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
-      return {
-        ...aggregateData[0].rows[0],
-        comment_count: aggregateData[1].rows.length,
-      };
+      return result;
     }
   );
 };
