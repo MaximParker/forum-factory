@@ -1,6 +1,5 @@
 exports.handleQueryErrors = (err, req, res, next) => {
   if (err.code) {
-    console.log("handleQueryErrors:", err.code, err);
     if (err.code === "22P02" || err.code === "23502") {
       res.status(400).send({ msg: "Bad Request" });
     }
@@ -14,7 +13,6 @@ exports.handleQueryErrors = (err, req, res, next) => {
 
 exports.handleCustomErrors = (err, req, res, next) => {
   if (err.status) {
-    console.log("handleCustomErrors:", err.code, err);
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
@@ -22,6 +20,5 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handleServerErrors = (err, req, res, next) => {
-  console.log("handleServerErrors", err);
   res.status(500).send({ msg: "Internal server error" });
 };
