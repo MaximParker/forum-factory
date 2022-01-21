@@ -49,16 +49,48 @@ $ npm run dev
 ---
 ## Available endpoints
 
-```http
-GET /api/topics
-GET /api/articles/:article_id
-PATCH /api/articles/:article_id
-GET /api/articles
-GET /api/articles/:article_id/comments
-POST /api/articles/:article_id/comments
-DELETE /api/comments/:comment_id
-GET /api
+### `GET /api/`
+- Retrieves a JSON object of available endpoints in the API
+
+### `GET /api/users/`
+- Retrieves a list of users
+
+### `GET /api/users/:username`
+- Retrieves an individual user from the database
+- `:username` must be valid and exist
+
+### `GET /api/topics`
+- Retrieves a list of topics
+
+### `GET /api/articles`
+- Retrieves a list of articles
+
+### `GET /api/articles/:article_id`
+- Retrieves an individual article, along with the number of comments associated with it
+
+### `PATCH /api/articles/:article_id`
+- Increments the article's `votes` property by the `inc_votes` property in the request body
+- Example request body: 
+```
+{ inc_votes: -3 }
+```
+### `GET /api/articles/:article_id/comments`
+- Retrieves a list of comments associated with the given `article_id`
+
+### `POST /api/articles/:article_id/comments`
+- Adds a comment to the database, associated with the given `article_id`
+- Example request body:
+```
+{ username: "lurker", body: "10/10 would comment again" };
+```
+### `PATCH /api/comments/:comment_id`
+- Increments the comment's `votes` property by the `inc_votes` property in the request body
+- Example request body: 
+```
+{ inc_votes: 7 }
 ```
 
+### `DELETE /api/comments/:comment_id`
+- Deletes the specified comment from the database
 ---
 Copyright (c) 2022
