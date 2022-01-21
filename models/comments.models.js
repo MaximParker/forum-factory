@@ -1,10 +1,9 @@
 const db = require("../db/connection");
 const format = require("pg-format");
-const { validateArticleID } = require("../utils/utils");
+const { validateArticleID, validateCommentID } = require("../utils/utils");
 
 exports.selectCommentsByID = (id) => {
-  return validateArticleID(id)
-  .then(() => {
+  return validateArticleID(id).then(() => {
     return db
       .query(
         `SELECT comment_id, votes, created_at, author, body
@@ -19,6 +18,13 @@ exports.selectCommentsByID = (id) => {
 };
 
 exports.insertCommentByArticleID = (id, commentObject) => {
+  if (
+    !Object.keys(commentObject).includes("username") ||
+    !Object.keys(commentObject).includes("body")
+  ) {
+    return Promise.reject({ status: 422, msg: "Unprocessable Entity" });
+  }
+
   return db
     .query(
       `INSERT INTO comments (author, body, article_id)
@@ -33,14 +39,12 @@ exports.insertCommentByArticleID = (id, commentObject) => {
 };
 
 exports.deleteCommentByID = (id) => {
-  return db
-    .query(
+  return validateCommentID(id)
+  .then(() => {
+    return db.query(
       `DELETE FROM comments
-  WHERE comment_id = $1
-  RETURNING *`,
+      WHERE comment_id = $1;`,
       [id]
-    )
-    .then(({ rows }) => {
-      return rows[0];
-    });
+    );
+  });
 };

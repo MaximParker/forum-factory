@@ -71,18 +71,19 @@ exports.selectArticleByID = (id) => {
 };
 
 exports.updateArticleVotes = (id, votesModifier) => {
-  if (
-    typeof votesModifier.inc_votes != "number" ||
-    Object.keys(votesModifier) != "inc_votes"
-  ) {
-    return Promise.reject({ status: 422, msg: "Unprocessable Entity" });
-  }
-
-  return db.query(
-    `UPDATE articles
-    SET votes = votes + $2
-    WHERE article_id = $1
-    RETURNING *;`,
-    [id, votesModifier.inc_votes]
-  );
+  return validateArticleID(id).then(() => {
+    if (
+      typeof votesModifier.inc_votes != "number" ||
+      Object.keys(votesModifier) != "inc_votes"
+    ) {
+      return Promise.reject({ status: 422, msg: "Unprocessable Entity" });
+    }
+    return db.query(
+      `UPDATE articles
+      SET votes = votes + $2
+      WHERE article_id = $1
+      RETURNING *;`,
+      [id, votesModifier.inc_votes]
+    );
+  });
 };

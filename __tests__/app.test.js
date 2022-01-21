@@ -328,6 +328,43 @@ describe("/api/articles/:article_id/comments", () => {
           expect(body.msg).toEqual("Bad Request");
         });
     });
+    test("Responds 422 for missing username in body properties", () => {
+      const badCommentObj = { username: "lurker"};
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(badCommentObj)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+    test("Responds 422 for missing body in body properties", () => {
+      const badCommentObj2 = { body: "hello" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(badCommentObj2)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+    test("Responds 404 for non-existent usernames", () => {
+      const ghostComment = { username: "asdhsadhsadfh", body: "hello"};
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(ghostComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 201 while ignroing unnecessary body properties", () => {
+      const strangeComment = { username: "lurker", body: "hello", favouriteFruit: "bananas"};
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(strangeComment)
+        .expect(201)
+    });
   });
 });
 
@@ -344,6 +381,7 @@ describe("/api/comments/:comment_id", () => {
     test("Actually removes the specified comment from the database", () => {
       return request(app)
         .delete("/api/comments/1")
+        .expect(204)
         .then(() => {
           return db
             .query("SELECT * FROM comments WHERE comment_id = 1;")
@@ -358,6 +396,14 @@ describe("/api/comments/:comment_id", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 400 for invalid comment_id", () => {
+      return request(app)
+        .delete("/api/comments/asdfasdfasfasdf")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
         });
     });
   });

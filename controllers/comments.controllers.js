@@ -1,4 +1,5 @@
 const { selectCommentsByID, insertCommentByArticleID, deleteCommentByID } = require("../models/comments.models");
+const { validateCommentID } = require('../utils/utils')
 
 exports.getCommentsOnArticle = (req, res, next) => {
   selectCommentsByID(req.params.article_id)
@@ -22,11 +23,8 @@ exports.postCommentOnArticle = (req, res, next) => {
 
 exports.removeComment = (req, res, next) => {
   deleteCommentByID(req.params.comment_id)
-  .then((result) => {
-    if (result == undefined) {
-      return Promise.reject({ status: 404, msg: "Not Found" });
-    }
-    res.status(204).send();
+  .then(() => {
+    res.sendStatus(204)
   })
   .catch((err) => {
     next(err);
