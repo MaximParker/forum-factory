@@ -87,3 +87,22 @@ exports.updateArticleVotes = (id, votesModifier) => {
     );
   });
 };
+
+exports.updateArticleBody = (id, bodyModifier) => {
+  return validateArticleID(id).then(() => {
+    if (
+      typeof bodyModifier.newBody != "string" ||
+      Object.keys(bodyModifier) != "newBody"
+    ) {
+      return Promise.reject({ status: 422, msg: "Unprocessable Entity" });
+    }
+    return db.query(
+      `UPDATE articles
+      SET body = $2
+      WHERE article_id = $1
+      RETURNING *;`,
+      [id, bodyModifier.newBody]
+    );
+  });
+};
+

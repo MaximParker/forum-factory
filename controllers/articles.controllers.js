@@ -2,6 +2,7 @@ const {
   selectAllArticles,
   selectArticleByID,
   updateArticleVotes,
+  updateArticleBody
 } = require("../models/articles.models");
 
 const { lookupTopics, validateArticleID } = require("../utils/utils");
@@ -37,14 +38,14 @@ exports.getArticleByID = (req, res, next) => {
 exports.patchArticleByID = (req, res, next) => {
   return validateArticleID(req.params.article_id)
     .then(() => {
-      const validQueries = ['votes']
       const { patch } = req.query;
 
-      if (!patch || !validQueries.includes(patch)) {
-        return Promise.reject({ status: 400, msg: "Bad Request" });
-      }
-      if (patch == 'votes') {
+      if (patch == "votes") {
         return updateArticleVotes(req.params.article_id, req.body);
+      } else if (patch == "body") {
+        return updateArticleBody(req.params.article_id, req.body);
+      } else {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
       }
     })
     .then(({ rows }) => {

@@ -70,9 +70,9 @@
   },
 
   "PATCH /api/articles/:article_id": {
-    "description": "Updates the vote counter on the specified article and returns the updated article object",
-    "queries": [],
-    "exampleInput": { "inc_votes": 99 },
+    "description": "Updates the article property specified in the patch query (e.g. '?patch=votes') and returns the updated article object",
+    "queries": ["patch"],
+    "exampleInput": [{ "inc_votes": 99 }, { "newBody": "Here is the new body of text!" }],
     "exampleResponse": {
       "article": {
         "article_id": 1,
