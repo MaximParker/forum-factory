@@ -5,4 +5,4 @@ const topicsRouter = express.Router();
 
 topicsRouter.get('/', getTopics);
 
-module.exports = { topicsRouter }
+module.exports = topicsRouter;

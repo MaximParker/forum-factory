@@ -4,7 +4,7 @@ const {
   updateArticleVotes,
 } = require("../models/articles.models");
 
-const { lookupTopics } = require("../utils/utils");
+const { lookupTopics, validateArticleID } = require("../utils/utils");
 
 exports.getArticles = (req, res, next) => {
   lookupTopics()
@@ -14,7 +14,7 @@ exports.getArticles = (req, res, next) => {
         req.query.order,
         req.query.topic,
         topics
-      )
+      );
     })
     .then(({ rows }) => {
       res.status(200).send({ articles: rows });
@@ -35,11 +35,11 @@ exports.getArticleByID = (req, res, next) => {
 };
 
 exports.patchArticleByID = (req, res, next) => {
-  updateArticleVotes(req.params.article_id, req.body)
+  return validateArticleID(req.params.article_id)
+    .then(() => {
+      return updateArticleVotes(req.params.article_id, req.body);
+    })
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        res.status(404).send({ msg: "Not Found" });
-      }
       res.status(201).send({ article: rows[0] });
     })
     .catch((err) => {

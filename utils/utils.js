@@ -28,16 +28,22 @@ exports.validateCommentID = (id) => {
   })
 };
 
+exports.validateUsername = (username) => {
+  return db.query('SELECT * FROM users WHERE username = $1;', [username])
+  .then(({rows}) => {
+    if (typeof username != 'string') {
+      return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+    if (rows.length == 0) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+    return true
+  })
+};
+
 exports.lookupTopics = () => {
   return db.query('SELECT slug FROM topics;')
   .then(({rows}) => {
     return rows.map((entry) => entry.slug)
-  })
-};
-
-exports.lookupUsernames = () => {
-  return db.query('SELECT usernames FROM users;')
-  .then(({rows}) => {
-    return rows.map((entry) => entry.username)
   })
 };

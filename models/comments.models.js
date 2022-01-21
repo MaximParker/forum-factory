@@ -39,12 +39,28 @@ exports.insertCommentByArticleID = (id, commentObject) => {
 };
 
 exports.deleteCommentByID = (id) => {
-  return validateCommentID(id)
-  .then(() => {
+  return validateCommentID(id).then(() => {
     return db.query(
       `DELETE FROM comments
       WHERE comment_id = $1;`,
       [id]
     );
   });
+};
+
+exports.updateCommentVotes = (id, votesModifier) => {
+  return validateCommentID(id)
+    .then(() => {
+      if (
+        typeof votesModifier.inc_votes != "number" ||
+        Object.keys(votesModifier) != "inc_votes"
+      ) {
+        return Promise.reject({ status: 422, msg: "Unprocessable Entity" });
+      }
+      return db.query(`UPDATE comments SET votes = votes + $1 WHERE comment_id = $2
+      RETURNING *;`, [votesModifier.inc_votes, id]);
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };

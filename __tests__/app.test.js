@@ -329,7 +329,7 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
     test("Responds 422 for missing username in body properties", () => {
-      const badCommentObj = { username: "lurker"};
+      const badCommentObj = { username: "lurker" };
       return request(app)
         .post("/api/articles/1/comments")
         .send(badCommentObj)
@@ -349,7 +349,7 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
     test("Responds 404 for non-existent usernames", () => {
-      const ghostComment = { username: "asdhsadhsadfh", body: "hello"};
+      const ghostComment = { username: "asdhsadhsadfh", body: "hello" };
       return request(app)
         .post("/api/articles/1/comments")
         .send(ghostComment)
@@ -359,11 +359,15 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
     test("Responds 201 while ignroing unnecessary body properties", () => {
-      const strangeComment = { username: "lurker", body: "hello", favouriteFruit: "bananas"};
+      const strangeComment = {
+        username: "lurker",
+        body: "hello",
+        favouriteFruit: "bananas",
+      };
       return request(app)
         .post("/api/articles/1/comments")
         .send(strangeComment)
-        .expect(201)
+        .expect(201);
     });
   });
 });
@@ -407,6 +411,71 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
+
+  describe("PATCH", () => {
+    test("Responds 201 with updated comment", () => {
+      const updateBody = { inc_votes: 99 };
+      return request(app)
+        .patch("/api/comments/5")
+        .send(updateBody)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment.votes).toEqual(99);
+        });
+    });
+    test("Responds 404 for non-existent comment_id", () => {
+      const updateBody = { inc_votes: 99 };
+      return request(app)
+        .patch("/api/comments/99999")
+        .send(updateBody)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 400 for invalid comment_id (e.g. non-numerical string)", () => {
+      const updateBody = { inc_votes: 100 };
+      return request(app)
+        .patch("/api/comments/not-a-real-comment")
+        .send(updateBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+    test("Responds 422 for missing attribute in request body", () => {
+      const badBody = {};
+      return request(app)
+        .patch("/api/comments/1")
+        .send(badBody)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+    test("Responds 422 for invalid inc_votes value in request body", () => {
+      const badBody = { inc_votes: "banana" };
+
+      return request(app)
+        .patch("/api/comments/1")
+        .send(badBody)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+    test("Responds 422 for presence of invalid attribute(s) in request body", () => {
+      const badBody = { inc_votes: 10, monkey: "wrench" };
+
+      return request(app)
+        .patch("/api/comments/1")
+        .send(badBody)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Unprocessable Entity");
+        });
+    });
+  });
 });
 
 describe("/api", () => {
@@ -421,17 +490,51 @@ describe("/api", () => {
     });
   });
 });
-/* 
-describe('/api/users', () => {
-  describe('GET', () => {
-    test('Responds with an array of users', () => {
+
+describe("/api/users", () => {
+  describe("GET", () => {
+    test("Responds 200 with an array of users", () => {
       return request(app)
-        .get('/api/users')
+        .get("/api/users")
         .expect(200)
-        .then(({body}) => {
-          expect(body).toEqual(endpoints)
+        .then(({ body }) => {
+          expect(body.users).toHaveLength(4);
+          body.users.forEach((entry) => {
+            expect(entry).toEqual(
+              expect.objectContaining({
+                avatar_url: expect.any(String),
+                name: expect.any(String),
+                username: expect.any(String),
+              })
+            );
+          });
         });
     });
   });
 });
-*/
+
+describe("/api/users/:username", () => {
+  describe("GET", () => {
+    test("Responds 200 with a single user object", () => {
+      return request(app)
+        .get("/api/users/lurker")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.user).toEqual({
+            avatar_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            name: "do_nothing",
+            username: "lurker",
+          });
+        });
+    });
+    test("Responds 404 for a nonexistent username", () => {
+      return request(app)
+        .get("/api/users/im_not_a_valid_user")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
+  });
+});

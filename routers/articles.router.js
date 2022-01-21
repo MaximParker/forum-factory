@@ -15,4 +15,4 @@ articlesRouter.route('/:article_id/comments')
     .get(getCommentsOnArticle)
     .post(postCommentOnArticle)
 
-module.exports = { articlesRouter }
+module.exports = articlesRouter;
