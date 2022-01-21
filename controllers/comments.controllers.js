@@ -2,9 +2,8 @@ const { selectCommentsByID, insertCommentByArticleID, deleteCommentByID } = requ
 
 exports.getCommentsOnArticle = (req, res, next) => {
   selectCommentsByID(req.params.article_id)
-    .then(({ rows }) => {
-      const formattedArr = rows.map(({ article_id, ...rest }) => rest);
-      res.status(200).send({ comments: formattedArr });
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);

@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const { validateArticleID } = require("../utils/utils");
 
 exports.selectAllArticles = (
   sortCriterion = "created_at",
@@ -14,7 +15,7 @@ exports.selectAllArticles = (
     "created_at",
     "author",
     "votes",
-    "body"
+    "body",
   ];
   const validOrderArrangements = ["ASC", "DESC", "asc", "desc"];
 
@@ -27,7 +28,6 @@ exports.selectAllArticles = (
   }
 
   if (filterTopic && !availableTopics.includes(filterTopic)) {
-    console.log("UNAVAILABLE TOPIC:", filterTopic, "not in", availableTopics)
     return Promise.reject({ status: 404, msg: "Not Found" });
   }
 
@@ -48,26 +48,26 @@ exports.selectAllArticles = (
     sortCriterion,
     orderArrangement
   );
-  return db.query(queryStr)
-}
+  return db.query(queryStr);
+};
 
 exports.selectArticleByID = (id) => {
-  return db.query(`
+  return validateArticleID(id)
+    .then(() => {
+      return db.query(
+        `
     SELECT articles.*, COUNT(comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id 
     WHERE articles.article_id = $1
     GROUP BY articles.article_id
     ;`,
-    [id])
-  .then(
-    (result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      }
+        [id]
+      );
+    })
+    .then((result) => {
       return result.rows[0];
-    }
-  );
+    });
 };
 
 exports.updateArticleVotes = (id, votesModifier) => {

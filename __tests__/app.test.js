@@ -4,7 +4,7 @@ const app = require("../app");
 const db = require("../db/connection.js");
 const testData = require("../db/data/test-data/index.js");
 const { seed } = require("../db/seeds/seed.js");
-const endpoints = require('../endpoints.json')
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -47,7 +47,7 @@ describe("/api/articles", () => {
                 author: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
-                comment_count: expect.any(String)
+                comment_count: expect.any(String),
               })
             );
           });
@@ -194,6 +194,16 @@ describe("/api/articles/:article_id", () => {
           expect(body.msg).toEqual("Not Found");
         });
     });
+    test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
+      const updateBody = { inc_votes: 100 };
+      return request(app)
+        .patch("/api/articles/not-a-real-article")
+        .send(updateBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
     test("Responds 422 for missing attribute in request body", () => {
       const badBody = {};
 
@@ -259,10 +269,29 @@ describe("/api/articles/:article_id/comments", () => {
           expect(body.comments).toHaveLength(0);
         });
     });
+    test("Returns 400 for invalid article ID", () => {
+      return request(app)
+        .get("/api/articles/asdfhasdkfdsffgsdf/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
+        });
+    });
+    test("Returns 404 for non-existent article ID", () => {
+      return request(app)
+        .get("/api/articles/99999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Not Found");
+        });
+    });
   });
   describe("POST", () => {
     test("Responds 201 and returns the posted comment", () => {
-      const commentObject = { username: "lurker", body: "10/10 would comment again" };
+      const commentObject = {
+        username: "lurker",
+        body: "10/10 would comment again",
+      };
       return request(app)
         .post("/api/articles/1/comments")
         .send(commentObject)
@@ -274,7 +303,7 @@ describe("/api/articles/:article_id/comments", () => {
               votes: 0,
               created_at: expect.any(String),
               author: "lurker",
-              body: "10/10 would comment again"
+              body: "10/10 would comment again",
             })
           );
         });
@@ -302,24 +331,25 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
-describe('/api/comments/:comment_id', () => {
-  describe('DELETE', () => {
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
     test("Responds 204 and no content", () => {
       return request(app)
         .delete("/api/comments/1")
         .expect(204)
         .then(({ body }) => {
-          expect(body).toEqual({})
+          expect(body).toEqual({});
         });
     });
     test("Actually removes the specified comment from the database", () => {
       return request(app)
         .delete("/api/comments/1")
         .then(() => {
-          return db.query('SELECT * FROM comments WHERE comment_id = 1;')
-            .then(({rows}) => {
-              expect(rows).toEqual([])
-            })
+          return db
+            .query("SELECT * FROM comments WHERE comment_id = 1;")
+            .then(({ rows }) => {
+              expect(rows).toEqual([]);
+            });
         });
     });
     test("Responds 404 for a non-existent comment_id", () => {
@@ -327,20 +357,20 @@ describe('/api/comments/:comment_id', () => {
         .delete("/api/comments/99999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toEqual("Not Found")
+          expect(body.msg).toEqual("Not Found");
         });
     });
   });
 });
 
-describe('/api', () => {
-  describe('GET', () => {
-    test('Responds with a JSON object describing all available endpoints in the API', () => {
+describe("/api", () => {
+  describe("GET", () => {
+    test("Responds with a JSON object describing all available endpoints in the API", () => {
       return request(app)
-        .get('/api')
+        .get("/api")
         .expect(200)
-        .then(({body}) => {
-          expect(body).toEqual(endpoints)
+        .then(({ body }) => {
+          expect(body).toEqual(endpoints);
         });
     });
   });
