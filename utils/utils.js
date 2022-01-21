@@ -31,7 +31,7 @@ exports.validateCommentID = (id) => {
 exports.validateUsername = (username) => {
   return db.query('SELECT * FROM users WHERE username = $1;', [username])
   .then(({rows}) => {
-    if (typeof username != 'string') {
+    if (!isNaN(username)) {
       return Promise.reject({ status: 400, msg: "Bad Request" });
     }
     if (rows.length == 0) {

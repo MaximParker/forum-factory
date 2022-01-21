@@ -622,10 +622,18 @@ describe("/api/users/:username", () => {
     });
     test("Responds 404 for a nonexistent username", () => {
       return request(app)
-        .get("/api/users/im_not_a_valid_user")
+        .get("/api/users/not-an-id")
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("Not Found");
+        });
+    });
+    test("Responds 400 for an invalid username", () => {
+      return request(app)
+        .get("/api/users/99999")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad Request");
         });
     });
   });
