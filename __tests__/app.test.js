@@ -172,70 +172,94 @@ describe("/api/articles/:article_id", () => {
   });
 
   describe("PATCH", () => {
-    test("Responds 201 with updated article", () => {
+    test("Responds 400 for missing query", () => {
       const updateBody = { inc_votes: 100 };
 
       return request(app)
-        .patch("/api/articles/1")
-        .send(updateBody)
-        .expect(201)
-        .then(({ body }) => {
-          expect(body.article.votes).toEqual(200);
-        });
-    });
-    test("Responds 404 for non-existent article_ID", () => {
-      const updateBody = { inc_votes: 100 };
-
-      return request(app)
-        .patch("/api/articles/99999")
+        .patch("/api/articles/99999?patch=votes")
         .send(updateBody)
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("Not Found");
         });
     });
-    test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
+    test("Responds 400 for invalid query", () => {
       const updateBody = { inc_votes: 100 };
+
       return request(app)
-        .patch("/api/articles/not-a-real-article")
+        .patch("/api/articles/99999?patch=asdfsadfgsadf")
         .send(updateBody)
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toEqual("Bad Request");
+          expect(body.msg).toEqual("Not Found");
         });
     });
-    test("Responds 422 for missing attribute in request body", () => {
-      const badBody = {};
+    describe("/api/articles/:article_id?patch=votes", () => {
+      test("Responds 201 with updated article for 'patch=votes' query", () => {
+        const updateBody = { inc_votes: 100 };
 
-      return request(app)
-        .patch("/api/articles/1")
-        .send(badBody)
-        .expect(422)
-        .then(({ body }) => {
-          expect(body.msg).toEqual("Unprocessable Entity");
-        });
-    });
-    test("Responds 422 for invalid inc_votes value in request body", () => {
-      const badBody = { inc_votes: "banana" };
+        return request(app)
+          .patch("/api/articles/1?patch=votes")
+          .send(updateBody)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.article.votes).toEqual(200);
+          });
+      });
+      test("Responds 404 for non-existent article_ID", () => {
+        const updateBody = { inc_votes: 100 };
 
-      return request(app)
-        .patch("/api/articles/1")
-        .send(badBody)
-        .expect(422)
-        .then(({ body }) => {
-          expect(body.msg).toEqual("Unprocessable Entity");
-        });
-    });
-    test("Responds 422 for presence of invalid attribute(s) in request body", () => {
-      const badBody = { inc_votes: 10, monkey: "wrench" };
+        return request(app)
+          .patch("/api/articles/99999?patch=votes")
+          .send(updateBody)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Not Found");
+          });
+      });
+      test("Responds 400 for invalid article_ID (e.g. non-numerical string)", () => {
+        const updateBody = { inc_votes: 100 };
+        return request(app)
+          .patch("/api/articles/not-a-real-article?patch=votes")
+          .send(updateBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Bad Request");
+          });
+      });
+      test("Responds 422 for missing attribute in request body", () => {
+        const badBody = {};
 
-      return request(app)
-        .patch("/api/articles/1")
-        .send(badBody)
-        .expect(422)
-        .then(({ body }) => {
-          expect(body.msg).toEqual("Unprocessable Entity");
-        });
+        return request(app)
+          .patch("/api/articles/1?patch=votes")
+          .send(badBody)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Unprocessable Entity");
+          });
+      });
+      test("Responds 422 for invalid inc_votes value in request body", () => {
+        const badBody = { inc_votes: "banana" };
+
+        return request(app)
+          .patch("/api/articles/1?patch=votes")
+          .send(badBody)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Unprocessable Entity");
+          });
+      });
+      test("Responds 422 for presence of invalid attribute(s) in request body", () => {
+        const badBody = { inc_votes: 10, monkey: "wrench" };
+
+        return request(app)
+          .patch("/api/articles/1?patch=votes")
+          .send(badBody)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).toEqual("Unprocessable Entity");
+          });
+      });
     });
   });
 });
