@@ -16,6 +16,7 @@ exports.selectAllArticles = (
     "author",
     "votes",
     "body",
+    "comment_count"
   ];
   const validOrderArrangements = ["ASC", "DESC", "asc", "desc"];
 
