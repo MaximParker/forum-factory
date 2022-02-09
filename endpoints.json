@@ -112,7 +112,7 @@
       "body": "10/10 would comment again"
     },
     "exampleResponse": {
-      "comments": [
+      "comment":
         {
           "comment_id": 15,
           "votes": 0,
@@ -120,7 +120,6 @@
           "author": "lurker",
           "body": "10/10 would comment again"
         }
-      ]
     }
   },
 
