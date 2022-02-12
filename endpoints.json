@@ -36,7 +36,7 @@
   },
 
   "GET /api/articles": {
-    "description": "Serves an array of all topics. Can be sorted by 'sort_by', ordered ASC or DESC with 'order', and filtered by 'topic'",
+    "description": "Serves an array of all articles. Can be sorted by 'sort_by', ordered ASC or DESC with 'order', and filtered by 'topic'",
     "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
